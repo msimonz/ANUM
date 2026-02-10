@@ -59,7 +59,14 @@ import math
 def f(x):
     return math.cos(x) - x
 ```
-
+Para correr el código:
+```bash
+# Terminal
+python3 global.py
+#Si tienes otra versión de Python
+python global.py
+```
 
 Próximamente este repositorio se irá ampliando con más algoritmos numéricos, por ejemplo:
 Punto Fijo
+
