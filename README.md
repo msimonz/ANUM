@@ -58,7 +58,7 @@ import math
 
 def f(x):
     return math.cos(x) - x
-
+```
 
 
 Próximamente este repositorio se irá ampliando con más algoritmos numéricos, por ejemplo:
