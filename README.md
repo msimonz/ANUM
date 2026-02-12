@@ -1,11 +1,15 @@
-# Algoritmo de Bisección
+# Algoritmos de Análisis Numérico
 
-Este proyecto implementa el **método de bisección**, un algoritmo numérico para **encontrar raíces** de una función continua.  
-En otras palabras: busca el valor \(x\) tal que \(f(x)=0\) dentro de un intervalo \([a,b]\).
+Este proyecto implementa algoritmos numéricos para **encontrar raíces** de ecuaciones (valor \(x\) tal que \(f(x)=0\)):
+
+- **Método de bisección**: busca la raíz en un intervalo \([a,b]\) donde \(f\) cambie de signo.
+- **Método de punto fijo**: busca \(x\) tal que \(x = g(x)\), iterando \(x_{n+1} = g(x_n)\).
 
 ---
 
-## ¿Cómo funciona el método de bisección?
+## Método de Bisección
+
+### ¿Cómo funciona el método de bisección?
 
 El método se basa en el **Teorema del Valor Intermedio**:
 
@@ -36,37 +40,85 @@ El algoritmo suele detenerse cuando se cumple alguno de estos:
 
 ---
 
-## ¿Cómo introducir la función en `global.py`?
+## Método de Punto Fijo
 
-En este proyecto la función \(f(x)\) se define en el archivo **`global.py`** para que el algoritmo la use directamente.
+### ¿Cómo funciona el método de punto fijo?
 
-1. Abre `global.py`
-2. Define tu función como una función de Python (recibiendo `x`):
+Dada una ecuación \(f(x)=0\), se reescribe en la forma **punto fijo** \(x = g(x)\). Un valor \(p\) que cumple \(p = g(p)\) es un **punto fijo** de \(g\) y además es raíz de \(f(x)=0\).
 
-Ejemplo:
+El método consiste en iterar a partir de un valor inicial \(x_0\):
+
+\[
+x_{n+1} = g(x_n), \quad n = 0, 1, 2, \ldots
+\]
+
+Si la sucesión converge, el límite es un punto fijo de \(g\) (y por tanto una raíz de la ecuación original, según cómo se haya definido \(g\)).
+
+### Pasos del algoritmo
+
+1. **Elegir** una función \(g(x)\) tal que la raíz buscada cumpla \(x = g(x)\) (por ejemplo, despejar \(x\) de \(f(x)=0\)).
+2. **Dar** un valor inicial \(x_0\) y una tolerancia \(\varepsilon\), y un máximo de iteraciones \(M\).
+3. **Iterar:** \(x_{n+1} = g(x_n)\).
+4. **Parar** cuando el error sea menor que la tolerancia o se alcance \(M\).
+
+### Criterios de parada
+
+- **Éxito:** error relativo \(e_n = \frac{|x_n - x_{n-1}|}{|x_n|} < \varepsilon\) (aproximación de la raíz obtenida).
+- **Fracaso:** después de \(M\) iteraciones no se alcanza la precisión deseada.
+
+La convergencia depende de que \(|g'(x)|\) sea menor que 1 en una región que contenga al punto fijo (condición de contractividad).
+
+---
+
+## ¿Cómo introducir las funciones en `global.py`?
+
+En el archivo **`global.py`** se definen las funciones y se llaman los algoritmos:
+
+- **Bisección:** necesita \(f(x)\) y un intervalo \([a,b]\) con \(f(a)\cdot f(b) < 0\).
+- **Punto fijo:** necesita \(g(x)\) tal que la raíz cumpla \(x = g(x)\), y un valor inicial \(x_0\).
+
+### Ejemplo (misma ecuación con ambos métodos)
+
+Para \(f(x) = x^3 - x - 2 = 0\):
+
+- Bisección usa \(f(x)\) en el intervalo \([1, 2]\).
+- Punto fijo usa \(g(x) = (x+2)^{1/3}\) (despeje \(x^3 = x + 2\)).
 
 ```python
 # global.py
-import math
+from biseccion import biseccion
+from puntofijo import punto_fijo
 
 def f(x):
     return x**3 - x - 2
 
-Ejemplo con trigonometría
-# global.py
-import math
+# Bisección
+raiz, info = biseccion(f, a=1, b=2, tol=1e-6, max_iter=50)
 
+# Punto fijo: x = (x+2)^(1/3)
+def g(x):
+    return (x + 2) ** (1.0 / 3.0)
+raiz_pf, info_pf = punto_fijo(g, x0=1.0, tol=1e-6, max_iter=50)
+```
+
+### Ejemplo con trigonometría
+
+Para \(f(x) = \cos(x) - x = 0\), una forma punto fijo es \(x = \cos(x)\), es decir \(g(x) = \cos(x)\):
+
+```python
+import math
 def f(x):
     return math.cos(x) - x
-```
-Para correr el código:
-```bash
-# Terminal
-python3 global.py
-#Si tienes otra versión de Python
-python global.py
+def g(x):
+    return math.cos(x)
+raiz, info = punto_fijo(g, x0=1.0, tol=1e-6, max_iter=50)
 ```
 
-Próximamente este repositorio se irá ampliando con más algoritmos numéricos, por ejemplo:
-Punto Fijo
+### Ejecutar
+
+```bash
+python global.py
+# o, según tu instalación:
+python3 global.py
+```
 
