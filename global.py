@@ -1,5 +1,6 @@
 from biseccion import biseccion
 from puntofijo import punto_fijo
+from posicionfalsa import posicion_falsa
 
 
 def f(x):
@@ -28,3 +29,14 @@ print(info_pf["reason"])
 print("Iteraciones: ", info_pf["iterations"])
 if "error_rel" in info_pf:
     print("Error relativo: ", info_pf["error_rel"])
+print()
+
+# Posición falsa (misma f e intervalo que bisección)
+raiz_pfalsa, info_pfalsa = posicion_falsa(f, a=1, b=2, tol=1e-6, max_iter=50)
+print("#*#*#*#*# POSICIÓN FALSA #*#*#*#*#*#")
+print("Status: ", info_pfalsa["status"])
+print("Raíz: ", raiz_pfalsa)
+print(info_pfalsa["reason"])
+print("Iteraciones: ", info_pfalsa["iterations"])
+if "error_rel" in info_pfalsa:
+    print("Error relativo: ", info_pfalsa["error_rel"])
