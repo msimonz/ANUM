@@ -6,6 +6,7 @@ Este proyecto implementa algoritmos numéricos para **encontrar raíces** de ecu
 - **Método de punto fijo**: busca \(x\) tal que \(x = g(x)\), iterando \(x_{n+1} = g(x_n)\).
 - **Método de posición falsa (regula falsi)**: usa la intersección de la secante con el eje \(x\) para aproximar la raíz en \([a,b]\).
 - **Método de Newton-Raphson**: usa la recta tangente a \(f\) en cada aproximación para obtener la siguiente; requiere \(f\) y su derivada \(f'\).
+- **Método de la secante**: aproxima la raíz usando la recta secante entre dos puntos; requiere \(f\), dos valores iniciales \(x_0\) y \(x_1\), y no usa la derivada.
 
 ---
 
@@ -128,6 +129,30 @@ El método requiere que \(f'\) no se anule en las aproximaciones (evitar divisi�
 
 ---
 
+## Método de la Secante
+
+### ¿Cómo funciona el método de la secante?
+
+Se parte de dos valores iniciales \(x_0\) y \(x_1\). En cada paso se traza la **recta secante** que une \((x_{n-1}, f(x_{n-1}))\) y \((x_n, f(x_n))\); la intersección de esa secante con el eje \(x\) es la siguiente aproximación \(x_{n+1}\). No se necesita la derivada de \(f\).
+
+### Fórmula de iteración
+
+\[
+x_{n+1} = \frac{x_{n-1}\, f(x_n) - x_n\, f(x_{n-1})}{f(x_n) - f(x_{n-1})}
+\]
+
+### Criterios de parada
+
+- **Error relativo:** \(e_{n+1} = \frac{|x_{n+1} - x_n|}{|x_{n+1}|}\).
+- **Éxito:** se obtuvo una aproximación de \(p\) cuando \(e_{n+1} < \varepsilon\).
+- **Fracaso:** no se logró la precisión deseada después de \(M\) iteraciones.
+
+### Uso en `global.py`
+
+- **Secante:** necesita \(f(x)\) y dos valores iniciales \(x_0\) y \(x_1\) (sin derivada).
+
+---
+
 ## ¿Cómo introducir las funciones en `global.py`?
 
 En el archivo **`global.py`** se definen las funciones y se llaman los algoritmos:
@@ -136,6 +161,7 @@ En el archivo **`global.py`** se definen las funciones y se llaman los algoritmo
 - **Punto fijo:** necesita \(g(x)\) tal que la raíz cumpla \(x = g(x)\), y un valor inicial \(x_0\).
 - **Posición falsa:** necesita \(f(x)\) y un intervalo \([a,b]\) con \(f(a)\cdot f(b) < 0\) (igual que bisección).
 - **Newton-Raphson:** necesita \(f(x)\), su derivada \(f'(x)\) y un valor inicial \(x_0\).
+- **Secante:** necesita \(f(x)\) y dos valores iniciales \(x_0\) y \(x_1\) (sin derivada).
 
 ### Ejemplo (misma ecuación con los cuatro métodos)
 
@@ -150,6 +176,7 @@ from biseccion import biseccion
 from puntofijo import punto_fijo
 from posicionfalsa import posicion_falsa
 from newtonRaphson import newton_raphson
+from secante import secante
 
 def f(x):
     return x**3 - x - 2
@@ -169,6 +196,9 @@ raiz_pfalsa, info_pfalsa = posicion_falsa(f, a=1, b=2, tol=1e-6, max_iter=50)
 def fp(x):
     return 3 * x**2 - 1
 raiz_nr, info_nr = newton_raphson(f, fp, x0=1.0, tol=1e-6, max_iter=50)
+
+# Secante (misma f, dos valores iniciales; no usa derivada)
+raiz_sec, info_sec = secante(f, x0=1.0, x1=2.0, tol=1e-6, max_iter=50)
 ```
 
 ### Ejemplo con trigonometría

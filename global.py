@@ -2,6 +2,7 @@ from biseccion import biseccion
 from puntofijo import punto_fijo
 from posicionfalsa import posicion_falsa
 from newtonRaphson import newton_raphson
+from secante import secante
 
 
 def f(x):
@@ -61,3 +62,14 @@ print(info_nr["reason"])
 print("Iteraciones: ", info_nr["iterations"])
 if "error_abs" in info_nr:
     print("Error absoluto (e_n): ", info_nr["error_abs"])
+print()
+
+# Secante (misma f que Newton-Raphson: f(x)=x³+4x²-10; X0=1, X1=2)
+raiz_sec, info_sec = secante(f_nr, x0=1.0, x1=2.0, tol=1e-6, max_iter=50)
+print("#*#*#*#*# SECANTE #*#*#*#*#*#")
+print("Status: ", info_sec["status"])
+print("Raíz: ", raiz_sec)
+print(info_sec["reason"])
+print("Iteraciones: ", info_sec["iterations"])
+if "error_rel" in info_sec:
+    print("Error relativo (e_n+1): ", info_sec["error_rel"])
