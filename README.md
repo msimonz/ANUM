@@ -5,6 +5,7 @@ Este proyecto implementa algoritmos numéricos para **encontrar raíces** de ecu
 - **Método de bisección**: busca la raíz en un intervalo \([a,b]\) donde \(f\) cambie de signo.
 - **Método de punto fijo**: busca \(x\) tal que \(x = g(x)\), iterando \(x_{n+1} = g(x_n)\).
 - **Método de posición falsa (regula falsi)**: usa la intersección de la secante con el eje \(x\) para aproximar la raíz en \([a,b]\).
+- **Método de Newton-Raphson**: usa la recta tangente a \(f\) en cada aproximación para obtener la siguiente; requiere \(f\) y su derivada \(f'\).
 
 ---
 
@@ -100,6 +101,33 @@ x_n = \frac{a_n\, f(b_n) - b_n\, f(a_n)}{f(b_n) - f(a_n)}
 
 ---
 
+## Método de Newton-Raphson
+
+### ¿Cómo funciona el método de Newton-Raphson?
+
+Se parte de un valor inicial \(x_0\) y se construye la sucesión usando la **recta tangente** a \(f\) en cada punto: la intersección de esa tangente con el eje \(x\) es la siguiente aproximación. Así se obtiene una convergencia muy rápida cuando la raíz es simple y \(x_0\) está suficientemente cerca.
+
+### Fórmula de iteración
+
+\[
+x_n = x_{n-1} - \frac{f(x_{n-1})}{f'(x_{n-1})}, \quad n = 1, 2, \ldots, M
+\]
+
+### Pasos del algoritmo
+
+1. **Entrada:** función \(f\), derivada \(f'\), valor inicial \(x_0\), tolerancia \(\varepsilon\) y máximo de iteraciones \(M\).
+2. **Iterar:** para \(n = 1, 2, \ldots, M\), calcular \(x_n = x_{n-1} - f(x_{n-1}) / f'(x_{n-1})\).
+3. **Parar** cuando se cumpla un criterio de parada.
+
+### Criterios de parada
+
+- **Éxito:** se obtuvo una aproximación de la raíz \(p\) cuando el error absoluto \(e_n = |x_n - x_{n-1}| < \varepsilon\).
+- **Fracaso:** después de \(M\) iteraciones no se logró la precisión deseada.
+
+El método requiere que \(f'\) no se anule en las aproximaciones (evitar división por cero). La convergencia es típicamente cuadrática cerca de una raíz simple.
+
+---
+
 ## ¿Cómo introducir las funciones en `global.py`?
 
 En el archivo **`global.py`** se definen las funciones y se llaman los algoritmos:
@@ -107,8 +135,9 @@ En el archivo **`global.py`** se definen las funciones y se llaman los algoritmo
 - **Bisección:** necesita \(f(x)\) y un intervalo \([a,b]\) con \(f(a)\cdot f(b) < 0\).
 - **Punto fijo:** necesita \(g(x)\) tal que la raíz cumpla \(x = g(x)\), y un valor inicial \(x_0\).
 - **Posición falsa:** necesita \(f(x)\) y un intervalo \([a,b]\) con \(f(a)\cdot f(b) < 0\) (igual que bisección).
+- **Newton-Raphson:** necesita \(f(x)\), su derivada \(f'(x)\) y un valor inicial \(x_0\).
 
-### Ejemplo (misma ecuación con los tres métodos)
+### Ejemplo (misma ecuación con los cuatro métodos)
 
 Para \(f(x) = x^3 - x - 2 = 0\):
 
@@ -120,6 +149,7 @@ Para \(f(x) = x^3 - x - 2 = 0\):
 from biseccion import biseccion
 from puntofijo import punto_fijo
 from posicionfalsa import posicion_falsa
+from newtonRaphson import newton_raphson
 
 def f(x):
     return x**3 - x - 2
@@ -134,6 +164,11 @@ raiz_pf, info_pf = punto_fijo(g, x0=1.0, tol=1e-6, max_iter=50)
 
 # Posición falsa (misma f e intervalo que bisección)
 raiz_pfalsa, info_pfalsa = posicion_falsa(f, a=1, b=2, tol=1e-6, max_iter=50)
+
+# Newton-Raphson (necesita f y su derivada f')
+def fp(x):
+    return 3 * x**2 - 1
+raiz_nr, info_nr = newton_raphson(f, fp, x0=1.0, tol=1e-6, max_iter=50)
 ```
 
 ### Ejemplo con trigonometría
