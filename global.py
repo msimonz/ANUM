@@ -1,6 +1,7 @@
 from biseccion import biseccion
 from puntofijo import punto_fijo
 from posicionfalsa import posicion_falsa
+from newtonRaphson import newton_raphson
 
 
 def f(x):
@@ -40,3 +41,23 @@ print(info_pfalsa["reason"])
 print("Iteraciones: ", info_pfalsa["iterations"])
 if "error_rel" in info_pfalsa:
     print("Error relativo: ", info_pfalsa["error_rel"])
+print()
+
+
+# Newton-Raphson (ejemplo pizarra: f(x)=x³+4x²-10, f'(x)=3x²+8x, Xo=1)
+def f_nr(x):
+    return x**3 + 4 * x**2 - 10
+
+
+def fp_nr(x):
+    return 3 * x**2 + 8 * x
+
+
+raiz_nr, info_nr = newton_raphson(f_nr, fp_nr, x0=1.0, tol=1e-6, max_iter=50)
+print("#*#*#*#*# NEWTON-RAPHSON #*#*#*#*#*#")
+print("Status: ", info_nr["status"])
+print("Raíz: ", raiz_nr)
+print(info_nr["reason"])
+print("Iteraciones: ", info_nr["iterations"])
+if "error_abs" in info_nr:
+    print("Error absoluto (e_n): ", info_nr["error_abs"])
