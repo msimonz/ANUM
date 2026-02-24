@@ -61,14 +61,23 @@ def main():
 
     elif opcion == "2":
         print("\n--- Punto fijo ---")
+        print("Se construirá automáticamente g(x) = x - λ·f(x) a partir de f(x).")
         expr = input("Ingrese f(x): ")
         f = construir_funcion(expr)
-        lam = float(input("Ingrese λ: "))
+        x0 = float(input("Valor inicial x0: "))
+
+        # Estimación numérica de f'(x0)
+        h = 1e-4
+        fp_x0 = (f(x0 + h) - f(x0 - h)) / (2 * h)
+
+        if fp_x0 == 0 or not math.isfinite(fp_x0):
+            lam = 0.1
+        else:
+            lam = 0.9 / fp_x0 if abs(fp_x0) > 1 else 0.9 * (1 / fp_x0)
 
         def g(x, f=f, lam=lam):
             return x - lam * f(x)
 
-        x0 = float(input("Valor inicial x0: "))
         tol = float(input("Tolerancia: "))
         max_iter = int(input("Máximo de iteraciones: "))
 
