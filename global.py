@@ -1,3 +1,5 @@
+import math
+
 from biseccion import biseccion
 from puntofijo import punto_fijo
 from posicionfalsa import posicion_falsa
@@ -5,71 +7,125 @@ from newtonRaphson import newton_raphson
 from secante import secante
 
 
-def f(x):
-    return x**3 - x - 2  # raíz cerca de 1.521...
+def construir_funcion(descripcion: str):
+    """
+    Construye una función f(x) a partir de una cadena, por ejemplo:
+    'x**3 - x - 2' o 'math.sin(x) - x/2'.
+    """
+    descripcion = descripcion.strip()
+
+    def f(x: float) -> float:
+        return eval(
+            descripcion,
+            {"__builtins__": {}, "math": math},
+            {"x": x},
+        )
+
+    return f
 
 
-# Bisección
-raiz, info = biseccion(f, a=1, b=2, tol=1e-6, max_iter=50)
-print("#*#*#*#*# BISECCIÓN #*#*#*#*#*#")
-print("Status: ", info["status"])
-print("Raíz: ", raiz)
-print(info["reason"])
-print("Iteraciones: ", info["iterations"])
-print()
-
-# Punto fijo: f(x)=0 => x^3-x-2=0 => x = (x+2)^(1/3) = g(x)
-def g(x):
-    return (x + 2) ** (1.0 / 3.0)
-
-
-raiz_pf, info_pf = punto_fijo(g, x0=1.0, tol=1e-6, max_iter=50)
-print("#*#*#*#*# PUNTO FIJO #*#*#*#*#*#")
-print("Status: ", info_pf["status"])
-print("Raíz (punto fijo): ", raiz_pf)
-print(info_pf["reason"])
-print("Iteraciones: ", info_pf["iterations"])
-if "error_rel" in info_pf:
-    print("Error relativo: ", info_pf["error_rel"])
-print()
-
-# Posición falsa (misma f e intervalo que bisección)
-raiz_pfalsa, info_pfalsa = posicion_falsa(f, a=1, b=2, tol=1e-6, max_iter=50)
-print("#*#*#*#*# POSICIÓN FALSA #*#*#*#*#*#")
-print("Status: ", info_pfalsa["status"])
-print("Raíz: ", raiz_pfalsa)
-print(info_pfalsa["reason"])
-print("Iteraciones: ", info_pfalsa["iterations"])
-if "error_rel" in info_pfalsa:
-    print("Error relativo: ", info_pfalsa["error_rel"])
-print()
+def imprimir_resultado(nombre: str, raiz, info: dict):
+    print("#*#*#*#*# ", nombre, " #*#*#*#*#*#", sep="")
+    print("Status: ", info.get("status"))
+    print("Raíz aproximada: ", raiz)
+    print(info.get("reason"))
+    print("Iteraciones: ", info.get("iterations"))
+    if "error_rel" in info:
+        print("Error relativo: ", info["error_rel"])
+    if "error_abs" in info:
+        print("Error absoluto: ", info["error_abs"])
+    print()
 
 
-# Newton-Raphson (ejemplo pizarra: f(x)=x³+4x²-10, f'(x)=3x²+8x, Xo=1)
-def f_nr(x):
-    return x**3 + 4 * x**2 - 10
+def main():
+    print("=== MÉTODOS DE BÚSQUEDA DE RAÍCES ===")
+    print("1) Bisección")
+    print("2) Punto fijo")
+    print("3) Posición falsa")
+    print("4) Newton-Raphson")
+    print("5) Secante")
+
+    opcion = input("Seleccione un método (1-5): ").strip()
+
+    if opcion == "1":
+        print("\n--- Bisección ---")
+        expr = input("Ingrese f(x), por ejemplo x**3 - x - 2: ")
+        f = construir_funcion(expr)
+        a = float(input("Extremo inferior a: "))
+        b = float(input("Extremo superior b: "))
+        tol = float(input("Tolerancia: "))
+        max_iter = int(input("Máximo de iteraciones: "))
+
+        raiz, info = biseccion(f, a=a, b=b, tol=tol, max_iter=max_iter)
+        imprimir_resultado("BISECCIÓN", raiz, info)
+
+    elif opcion == "2":
+        print("\n--- Punto fijo ---")
+        print("Opción 1: ingresar g(x) directamente, tal que la raíz cumpla x = g(x).")
+        print("Opción 2: ingresar f(x) y construir g(x) = x - λ·f(x).")
+        modo = input("Seleccione 1 ó 2: ").strip()
+
+        if modo == "1":
+            expr = input("Ingrese g(x), por ejemplo (x + 2)**(1/3): ")
+            g = construir_funcion(expr)
+        else:
+            expr = input("Ingrese f(x), por ejemplo x**3 - x - 2: ")
+            f = construir_funcion(expr)
+            lam = float(input("Ingrese λ (por ejemplo 0.1): "))
+
+            def g(x, f=f, lam=lam):
+                return x - lam * f(x)
+
+        x0 = float(input("Valor inicial x0: "))
+        tol = float(input("Tolerancia: "))
+        max_iter = int(input("Máximo de iteraciones: "))
+
+        raiz, info = punto_fijo(g, x0=x0, tol=tol, max_iter=max_iter)
+        imprimir_resultado("PUNTO FIJO", raiz, info)
+
+    elif opcion == "3":
+        print("\n--- Posición falsa ---")
+        expr = input("Ingrese f(x), por ejemplo x**3 - x - 2: ")
+        f = construir_funcion(expr)
+        a = float(input("Extremo inferior a: "))
+        b = float(input("Extremo superior b: "))
+        tol = float(input("Tolerancia: "))
+        max_iter = int(input("Máximo de iteraciones: "))
+
+        raiz, info = posicion_falsa(f, a=a, b=b, tol=tol, max_iter=max_iter)
+        imprimir_resultado("POSICIÓN FALSA", raiz, info)
+
+    elif opcion == "4":
+        print("\n--- Newton-Raphson ---")
+        expr = input("Ingrese f(x), por ejemplo x**3 + 4*x**2 - 10: ")
+        f = construir_funcion(expr)
+
+        # Derivada numérica para no pedir f'(x) por consola
+        def fp(x: float, h: float = 1e-6) -> float:
+            return (f(x + h) - f(x - h)) / (2 * h)
+
+        x0 = float(input("Valor inicial x0: "))
+        tol = float(input("Tolerancia: "))
+        max_iter = int(input("Máximo de iteraciones: "))
+
+        raiz, info = newton_raphson(f, fp, x0=x0, tol=tol, max_iter=max_iter)
+        imprimir_resultado("NEWTON-RAPHSON", raiz, info)
+
+    elif opcion == "5":
+        print("\n--- Secante ---")
+        expr = input("Ingrese f(x), por ejemplo x**3 + 4*x**2 - 10: ")
+        f = construir_funcion(expr)
+        x0 = float(input("Valor inicial x0: "))
+        x1 = float(input("Segundo valor inicial x1: "))
+        tol = float(input("Tolerancia: "))
+        max_iter = int(input("Máximo de iteraciones: "))
+
+        raiz, info = secante(f, x0=x0, x1=x1, tol=tol, max_iter=max_iter)
+        imprimir_resultado("SECANTE", raiz, info)
+
+    else:
+        print("Opción no válida.")
 
 
-def fp_nr(x):
-    return 3 * x**2 + 8 * x
-
-
-raiz_nr, info_nr = newton_raphson(f_nr, fp_nr, x0=1.0, tol=1e-6, max_iter=50)
-print("#*#*#*#*# NEWTON-RAPHSON #*#*#*#*#*#")
-print("Status: ", info_nr["status"])
-print("Raíz: ", raiz_nr)
-print(info_nr["reason"])
-print("Iteraciones: ", info_nr["iterations"])
-if "error_abs" in info_nr:
-    print("Error absoluto (e_n): ", info_nr["error_abs"])
-print()
-
-# Secante (misma f que Newton-Raphson: f(x)=x³+4x²-10; X0=1, X1=2)
-raiz_sec, info_sec = secante(f_nr, x0=1.0, x1=2.0, tol=1e-6, max_iter=50)
-print("#*#*#*#*# SECANTE #*#*#*#*#*#")
-print("Status: ", info_sec["status"])
-print("Raíz: ", raiz_sec)
-print(info_sec["reason"])
-print("Iteraciones: ", info_sec["iterations"])
-if "error_rel" in info_sec:
-    print("Error relativo (e_n+1): ", info_sec["error_rel"])
+if __name__ == "__main__":
+    main()
