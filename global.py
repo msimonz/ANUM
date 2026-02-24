@@ -49,7 +49,7 @@ def main():
 
     if opcion == "1":
         print("\n--- Bisección ---")
-        expr = input("Ingrese f(x), por ejemplo x**3 - x - 2: ")
+        expr = input("Ingrese f(x): ")
         f = construir_funcion(expr)
         a = float(input("Extremo inferior a: "))
         b = float(input("Extremo superior b: "))
@@ -61,20 +61,12 @@ def main():
 
     elif opcion == "2":
         print("\n--- Punto fijo ---")
-        print("Opción 1: ingresar g(x) directamente, tal que la raíz cumpla x = g(x).")
-        print("Opción 2: ingresar f(x) y construir g(x) = x - λ·f(x).")
-        modo = input("Seleccione 1 ó 2: ").strip()
+        expr = input("Ingrese f(x): ")
+        f = construir_funcion(expr)
+        lam = float(input("Ingrese λ: "))
 
-        if modo == "1":
-            expr = input("Ingrese g(x), por ejemplo (x + 2)**(1/3): ")
-            g = construir_funcion(expr)
-        else:
-            expr = input("Ingrese f(x), por ejemplo x**3 - x - 2: ")
-            f = construir_funcion(expr)
-            lam = float(input("Ingrese λ (por ejemplo 0.1): "))
-
-            def g(x, f=f, lam=lam):
-                return x - lam * f(x)
+        def g(x, f=f, lam=lam):
+            return x - lam * f(x)
 
         x0 = float(input("Valor inicial x0: "))
         tol = float(input("Tolerancia: "))
@@ -85,7 +77,7 @@ def main():
 
     elif opcion == "3":
         print("\n--- Posición falsa ---")
-        expr = input("Ingrese f(x), por ejemplo x**3 - x - 2: ")
+        expr = input("Ingrese f(x): ")
         f = construir_funcion(expr)
         a = float(input("Extremo inferior a: "))
         b = float(input("Extremo superior b: "))
@@ -97,7 +89,7 @@ def main():
 
     elif opcion == "4":
         print("\n--- Newton-Raphson ---")
-        expr = input("Ingrese f(x), por ejemplo x**3 + 4*x**2 - 10: ")
+        expr = input("Ingrese f(x): ")
         f = construir_funcion(expr)
 
         # Derivada numérica para no pedir f'(x) por consola
@@ -113,7 +105,7 @@ def main():
 
     elif opcion == "5":
         print("\n--- Secante ---")
-        expr = input("Ingrese f(x), por ejemplo x**3 + 4*x**2 - 10: ")
+        expr = input("Ingrese f(x): ")
         f = construir_funcion(expr)
         x0 = float(input("Valor inicial x0: "))
         x1 = float(input("Segundo valor inicial x1: "))
