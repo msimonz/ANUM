@@ -101,7 +101,7 @@ def eliminacion_gaussiana(A, b):
 def mostrar_matriz_aumentada(Ab):
     """Muestra la matriz aumentada [A | b]."""
     n = Ab.shape[0]
-    print("📋 Matriz aumentada [ A | b ]:")
+    print("Matriz aumentada [ A | b ]:")
     print()
     for i in range(n):
         coefs = "  ".join(f"{Ab[i, j]:8.4f}" for j in range(n))
@@ -116,7 +116,7 @@ if __name__ == "__main__":
         "3*X1 + 4*X2 = 11",
     ]
 
-    print("📝 Sistema de ecuaciones:")
+    print("Sistema de ecuaciones:")
     for i, ec in enumerate(ecuaciones, 1):
         print(f"   {i}. {ec}")
     print()
@@ -125,7 +125,7 @@ if __name__ == "__main__":
     Ab = matriz_aumentada(A, b)
     mostrar_matriz_aumentada(Ab)
 
-    print("🔄 Resolviendo por eliminación gaussiana...\n")
+    print("Resolviendo por eliminación gaussiana...\n")
     exito, x, mensaje = eliminacion_gaussiana(A, b)
 
     if exito:

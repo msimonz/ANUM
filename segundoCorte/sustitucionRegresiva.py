@@ -51,8 +51,8 @@ def parsear_sistema(ecuaciones):
     n = len(variables)
     m = len(ecuaciones)
     
-    print(f"📊 Variables encontradas: {variables}")
-    print(f"📝 Número de ecuaciones: {m}\n")
+    print(f"Variables encontradas: {variables}")
+    print(f"Número de ecuaciones: {m}\n")
     
     # Crear mapeo de variables a índices
     var_to_idx = {var: i for i, var in enumerate(variables)}
@@ -176,7 +176,7 @@ def mostrar_matriz_sistema(R, C, variables):
     variables : list
         Lista de nombres de variables
     """
-    print("📋 Matriz aumentada [R | C]:")
+    print("Matriz aumentada [R | C]:")
     print()
     for i in range(len(C)):
         fila = ""
@@ -213,7 +213,7 @@ def verificar_solucion(R, C, x, variables):
     bool
         True si la solución es correcta
     """
-    print("🔍 Verificación (R × x = C):")
+    print("Verificación (R × x = C):")
     print()
     resultado = R @ x
     es_correcto = True
@@ -240,7 +240,7 @@ def mostrar_solucion(variables, x):
     x : ndarray
         Vector solución
     """
-    print("✅ SOLUCIÓN:")
+    print("SOLUCIÓN:")
     print("="*70)
     for var, valor in zip(variables, x):
         print(f"   {var} = {valor:.6g}")

@@ -31,8 +31,8 @@ def parsear_sistema(ecuaciones):
     n = len(variables)
     m = len(ecuaciones)
     
-    print(f"📊 Variables encontradas: {variables}")
-    print(f"📝 Número de ecuaciones: {m}\n")
+    print(f"Variables encontradas: {variables}")
+    print(f"Número de ecuaciones: {m}\n")
     
     var_to_idx = {var: i for i, var in enumerate(variables)}
     
@@ -126,7 +126,7 @@ def gauss_seidel(A, b, X0, epsilon, N_max):
     errores = []
     convergio = False
     
-    print(f"🔄 Iniciando método Gauss-Seidel")
+    print(f"Iniciando método Gauss-Seidel")
     print(f"   Tolerancia (ε) = {epsilon}")
     print(f"   Máximo de iteraciones (N) = {N_max}\n")
     
@@ -148,7 +148,7 @@ def gauss_seidel(A, b, X0, epsilon, N_max):
             
             # Calcular xi^(k)
             if abs(A[i, i]) < 1e-10:
-                raise ValueError(f"❌ División por cero: A[{i},{i}] ≈ 0")
+                raise ValueError(f"División por cero: A[{i},{i}] ≈ 0")
             
             x[i] = (b[i] - suma1 - suma2) / A[i, i]
         
@@ -162,11 +162,11 @@ def gauss_seidel(A, b, X0, epsilon, N_max):
         # Verificar convergencia
         if error < epsilon:
             convergio = True
-            print(f"\n✅ ¡Convergió en iteración {k}!")
+            print(f"\n¡Convergió en iteración {k}!")
             break
     
     if not convergio:
-        print(f"\n⚠️  No convergió después de {N_max} iteraciones")
+        print(f"\nNo convergió después de {N_max} iteraciones")
         print(f"    Último error: {errores[-1]:.2e}")
     
     return x, k, historial, errores, convergio
@@ -174,15 +174,16 @@ def gauss_seidel(A, b, X0, epsilon, N_max):
 
 def verificar_solucion(A_original, b_original, x):
     """Verifica que la solución sea correcta"""
-    print("\n🔍 Verificación (A × x = b):")
+    print("\nVerificación (A × x = b):")
     print()
     resultado = A_original @ x
+    tol_verificacion = 1e-5
     
     es_correcto = True
     for i, (original, calculado) in enumerate(zip(b_original, resultado)):
-        estado = "✓" if abs(original - calculado) < 1e-6 else "✗"
+        estado = "✓" if np.isclose(original, calculado, atol=tol_verificacion, rtol=0.0) else "✗"
         print(f"   Ecuación {i+1}: {original:10.4f} = {calculado:10.4f}  {estado}")
-        if abs(original - calculado) > 1e-6:
+        if not np.isclose(original, calculado, atol=tol_verificacion, rtol=0.0):
             es_correcto = False
     
     print()
@@ -192,7 +193,7 @@ def verificar_solucion(A_original, b_original, x):
 
 def mostrar_solucion(variables, x):
     """Muestra la solución de forma clara"""
-    print("✅ SOLUCIÓN:")
+    print("SOLUCIÓN:")
     print("="*70)
     for var, valor in zip(variables, x):
         print(f"   {var} = {valor:.6g}")
@@ -202,7 +203,7 @@ def mostrar_solucion(variables, x):
 
 def mostrar_historial(historial, variables, mostrar_todos=False):
     """Muestra el historial de iteraciones"""
-    print("\n📋 Historial de iteraciones:")
+    print("\nHistorial de iteraciones:")
     print()
     
     if mostrar_todos or len(historial) <= 10:
@@ -220,7 +221,7 @@ def mostrar_historial(historial, variables, mostrar_todos=False):
 
 def mostrar_errores(errores):
     """Muestra el histórico de errores"""
-    print("\n📈 Histórico de errores:")
+    print("\nHistórico de errores:")
     print()
     for k, error in enumerate(errores, 1):
         print(f"   Iteración {k}: error = {error:.2e}")

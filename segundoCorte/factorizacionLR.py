@@ -32,8 +32,8 @@ def parsear_sistema(ecuaciones):
     n = len(variables)
     m = len(ecuaciones)
     
-    print(f"📊 Variables encontradas: {variables}")
-    print(f"📝 Número de ecuaciones: {m}\n")
+    print(f"Variables encontradas: {variables}")
+    print(f"Número de ecuaciones: {m}\n")
     
     var_to_idx = {var: i for i, var in enumerate(variables)}
     
@@ -140,7 +140,7 @@ def gauss_lr_pivoteo(A, b):
         
         # 2.2 CHEQUEO DE SINGULARIDAD
         if abs(R[max_idx, i]) < 1e-10:
-            raise ValueError(f"❌ La matriz es singular (elemento pivote = 0 en columna {i})")
+            raise ValueError(f"La matriz es singular (elemento pivote = 0 en columna {i})")
         
         # 2.3 INTERCAMBIO DE FILAS si es necesario
         if max_idx != i:
@@ -153,7 +153,7 @@ def gauss_lr_pivoteo(A, b):
             # Actualizar vector de permutación
             P[[i, max_idx]] = P[[max_idx, i]]
             
-            print(f"   Intercambio: Fila {i} ↔ Fila {max_idx}")
+            print(f"   Intercambio: Fila {i} <-> Fila {max_idx}")
         
         # Eliminación hacia adelante
         for j in range(i + 1, n):
@@ -252,11 +252,11 @@ def resolver_sistema_lr(A, b):
         Vector b permutado
     """
     
-    print("🔄 Iniciando factorización LR con pivoteo parcial...\n")
+    print("Iniciando factorización LR con pivoteo parcial...\n")
     
     L, R, P, b_perm = gauss_lr_pivoteo(A, b)
     
-    print("\n✅ Factorización completada\n")
+    print("\nFactorización completada\n")
     
     # Resolver L*y = b_perm (sustitución hacia adelante)
     y = sustitucion_hacia_adelante(L, b_perm)
@@ -269,7 +269,7 @@ def resolver_sistema_lr(A, b):
 
 def mostrar_matriz(matriz, nombre):
     """Muestra una matriz de forma legible"""
-    print(f"\n📋 {nombre}:")
+    print(f"\n{nombre}:")
     for i, fila in enumerate(matriz):
         print("  " + "  ".join([f"{val:8.4f}" for val in fila]))
     print()
@@ -277,7 +277,7 @@ def mostrar_matriz(matriz, nombre):
 
 def mostrar_solucion(variables, x):
     """Muestra la solución de forma clara"""
-    print("✅ SOLUCIÓN:")
+    print("SOLUCIÓN:")
     print("="*70)
     for var, valor in zip(variables, x):
         print(f"   {var} = {valor:.6g}")
@@ -287,7 +287,7 @@ def mostrar_solucion(variables, x):
 
 def verificar_solucion(A_original, b_original, x):
     """Verifica que la solución sea correcta"""
-    print("🔍 Verificación (A × x = b):")
+    print("Verificación (A × x = b):")
     print()
     resultado = A_original @ x
     
