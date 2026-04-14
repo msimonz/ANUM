@@ -31,6 +31,41 @@ verificar_solucion(R, C, solucion, variables)
 
 print("")
 
+print("################ELIMINACIÓN GAUSSIANA#####################")
+from eliminacionGaussiana import (
+    eliminacion_gaussiana,
+    matriz_aumentada,
+    mostrar_matriz_aumentada,
+)
+from factorizacionLR import parsear_sistema, mostrar_solucion, verificar_solucion
+
+ecuaciones = [
+    "X1 + 2*X2 = 5",
+    "3*X1 + 4*X2 = 11",
+]
+
+print("📝 Sistema de ecuaciones:")
+for i, ec in enumerate(ecuaciones, 1):
+    print(f"   {i}. {ec}")
+print()
+
+A, b, variables = parsear_sistema(ecuaciones)
+Ab = matriz_aumentada(A, b)
+mostrar_matriz_aumentada(Ab)
+
+print("🔄 Resolviendo por eliminación gaussiana...\n")
+exito, x, mensaje = eliminacion_gaussiana(A, b)
+
+if exito:
+    print("   Estado: ÉXITO\n")
+    mostrar_solucion(variables, x)
+    verificar_solucion(A, b, x)
+else:
+    print("   Estado: FRACASO")
+    print(f"   {mensaje}\n")
+
+print("")
+
 print("################FACTORIZACIÓN LR#####################")
 from factorizacionLR import (
     parsear_sistema,
