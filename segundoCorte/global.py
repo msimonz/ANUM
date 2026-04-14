@@ -22,7 +22,7 @@ from eliminacionGaussiana import (
     matriz_aumentada,
     mostrar_matriz_aumentada,
 )
-from gaussSeidel import gauss_seidel
+from gaussSeidel import gauss_seidel, verificar_solucion as verificar_solucion_gauss_seidel
 
 
 def imprimir_ayuda_opcion_1():
@@ -248,7 +248,7 @@ def main():
                 print(f"No convergió en {N_max} iteraciones (última aproximación mostrada).")
             print()
             mostrar_solucion(variables, x)
-            verificar_solucion(A, b, x)
+            verificar_solucion_gauss_seidel(A, b, x)
 
         else:
             print("Opción no válida.")
