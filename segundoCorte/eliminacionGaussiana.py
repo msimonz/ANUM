@@ -103,6 +103,51 @@ def mostrar_matriz_aumentada(Ab):
     n = Ab.shape[0]
     print("Matriz aumentada [ A | b ]:")
     print()
+
+
+def eliminacion_gaussiana_solo_matriz(A):
+    """
+    Triangulariza una matriz cuadrada A con eliminación gaussiana.
+
+    Retorna:
+    -------
+    exito : bool
+    U : ndarray o None
+    mensaje : str o None
+    """
+    U = np.array(A, dtype=float).copy()
+    if U.ndim != 2 or U.shape[0] != U.shape[1]:
+        raise ValueError("A debe ser una matriz cuadrada.")
+
+    n = U.shape[0]
+    for i in range(n - 1):
+        p = None
+        for row in range(i, n):
+            if abs(U[row, i]) > TOL:
+                p = row
+                break
+
+        if p is None:
+            return False, None, MSG_FRACASO
+
+        if p != i:
+            U[[i, p], :] = U[[p, i], :]
+
+        piv = U[i, i]
+        for j in range(i + 1, n):
+            m_ji = U[j, i] / piv
+            U[j, :] = U[j, :] - m_ji * U[i, :]
+
+    return True, U, None
+
+
+def mostrar_matriz(matriz, nombre):
+    """Muestra una matriz con formato uniforme."""
+    print(f"{nombre}:")
+    print()
+    for fila in matriz:
+        print("  " + "  ".join(f"{val:8.4f}" for val in fila))
+    print()
     for i in range(n):
         coefs = "  ".join(f"{Ab[i, j]:8.4f}" for j in range(n))
         print(f"   [{coefs} | {Ab[i, n]:8.4f}]")

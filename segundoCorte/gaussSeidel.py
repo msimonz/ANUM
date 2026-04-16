@@ -201,7 +201,7 @@ def mostrar_solucion(variables, x):
     print()
 
 
-def mostrar_historial(historial, variables, mostrar_todos=False):
+def mostrar_historial(historial, variables=None, mostrar_todos=False):
     """Muestra el historial de iteraciones"""
     print("\nHistorial de iteraciones:")
     print()
@@ -226,3 +226,12 @@ def mostrar_errores(errores):
     for k, error in enumerate(errores, 1):
         print(f"   Iteración {k}: error = {error:.2e}")
     print()
+
+
+def gauss_seidel_homogeneo(A, X0, epsilon, N_max):
+    """
+    Ejecuta Gauss-Seidel para el sistema homogéneo A*x = 0.
+    """
+    n = len(X0)
+    b = np.zeros(n)
+    return gauss_seidel(A, b, X0, epsilon, N_max)
