@@ -7,7 +7,7 @@ import numpy as np
 from io_sistema import leer_matriz_cuadrada_desde_txt
 from sustitucionRegresiva import sustitucion_regresiva
 from factorizacionLR import resolver_sistema_lr
-from eliminacionGaussiana import eliminacion_gaussiana_solo_matriz, mostrar_matriz
+from eliminacionGaussiana import eliminacion_gaussiana, mostrar_matriz
 from gaussSeidel import gauss_seidel_sistema, mostrar_historial, mostrar_errores
 
 
@@ -127,14 +127,18 @@ def opcion_1_sustitucion_regresiva(A):
 
 
 def opcion_2_eliminacion_gaussiana(A):
-    print("\n--- Eliminación gaussiana (triangularización de A) ---")
-    exito, U, mensaje = eliminacion_gaussiana_solo_matriz(A)
+    print("\n--- Eliminación gaussiana con sustitución hacia atrás (A*x=b) ---")
+    b = leer_vector_desde_consola(A.shape[0], "b")
+    exito, x, mensaje = eliminacion_gaussiana(A, b)
     if not exito:
         print("Estado: FRACASO")
         print(mensaje)
         return
     print("Estado: ÉXITO\n")
-    mostrar_matriz(U, "Matriz triangular superior U")
+    print("La solución es:")
+    for i, xi in enumerate(x, start=1):
+        print(f"  x{i} = {xi:.6f}")
+    print()
 
 
 def opcion_3_factorizacion_lr(A):
@@ -184,7 +188,7 @@ def opcion_4_gauss_seidel(A):
 def main():
     print("=== MÉTODOS PARA MATRICES CUADRADAS ===")
     print("1) Sustitución regresiva (modo transformación)")
-    print("2) Eliminación gaussiana (triangularización)")
+    print("2) Eliminación gaussiana con sustitución hacia atrás (A*x=b)")
     print("3) Factorización LR (con pivoteo parcial)")
     print("4) Gauss-Seidel para sistema A*x=b")
 
