@@ -187,9 +187,9 @@ def opcion_4_gauss_seidel(A):
 
 def main():
     print("=== MÉTODOS PARA MATRICES CUADRADAS ===")
-    print("1) Sustitución regresiva (modo transformación)")
+    print("1) Sustitución regresiva")
     print("2) Eliminación gaussiana con sustitución hacia atrás (A*x=b)")
-    print("3) Factorización LR (con pivoteo parcial)")
+    print("3) Factorización LR")
     print("4) Gauss-Seidel para sistema A*x=b")
 
     opcion = input("Seleccione un método (1-4): ").strip()
