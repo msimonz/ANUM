@@ -6,9 +6,9 @@ import numpy as np
 
 from io_sistema import leer_matriz_cuadrada_desde_txt
 from sustitucionRegresiva import sustitucion_regresiva
-from factorizacionLR import gauss_lr_pivoteo
+from factorizacionLR import resolver_sistema_lr
 from eliminacionGaussiana import eliminacion_gaussiana_solo_matriz, mostrar_matriz
-from gaussSeidel import gauss_seidel_homogeneo, mostrar_historial, mostrar_errores
+from gaussSeidel import gauss_seidel_sistema, mostrar_historial, mostrar_errores
 
 
 def leer_float(prompt: str) -> float:
@@ -38,6 +38,18 @@ def leer_int_positivo(prompt: str) -> int:
             print("El valor debe ser al menos 1.")
             continue
         return n
+
+
+def es_triangular_superior(M, tol=1e-12):
+    return np.all(np.abs(np.tril(M, k=-1)) <= tol)
+
+
+def leer_vector_desde_consola(n, nombre="C"):
+    print(f"\nIngresa el vector {nombre} ({n} valores):")
+    valores = []
+    for i in range(n):
+        valores.append(leer_float(f"  {nombre}{i + 1}: "))
+    return np.array(valores, dtype=float)
 
 
 def leer_matriz_desde_archivo():
@@ -98,11 +110,18 @@ def imprimir_matriz(nombre, M):
 
 def opcion_1_sustitucion_regresiva(A):
     print("\n--- Sustitución regresiva sobre A ---")
-    print("Se ejecuta directamente sobre A con C=0 (modo transformación).")
-    print("Nota: si A no es triangular superior, el resultado puede no ser interpretable.\n")
-    C = np.zeros(A.shape[0])
+    if not es_triangular_superior(A):
+        raise ValueError(
+            "Para sustitución regresiva, la matriz debe ser triangular superior."
+        )
+    if np.any(np.isclose(np.diag(A), 0.0, atol=1e-12)):
+        raise ValueError(
+            "La diagonal de la matriz contiene ceros; no se puede aplicar sustitución regresiva."
+        )
+
+    C = leer_vector_desde_consola(A.shape[0], "C")
     x = sustitucion_regresiva(A, C)
-    print("Resultado del vector x para A*x=0:")
+    print("\nResultado del vector x para A*x=C:")
     print("  " + "  ".join(f"{val:8.4f}" for val in x))
     print()
 
@@ -121,11 +140,15 @@ def opcion_2_eliminacion_gaussiana(A):
 def opcion_3_factorizacion_lr(A):
     print("\n--- Factorización LR ---")
     print("Descomponiendo A con pivoteo parcial...\n")
-    b_dummy = np.zeros(A.shape[0])
-    L, R, P, _b_perm = gauss_lr_pivoteo(A, b_dummy)
+    b = leer_vector_desde_consola(A.shape[0], "b")
+    x, L, R, P, b_perm = resolver_sistema_lr(A, b)
     imprimir_matriz("Matriz L (triangular inferior)", L)
     imprimir_matriz("Matriz R (triangular superior)", R)
     print("Vector de permutación P:", P)
+    print("Vector b permutado (P*b):")
+    print("  " + "  ".join(f"{val:8.4f}" for val in b_perm))
+    print("\nSolución x del sistema A*x=b:")
+    print("  " + "  ".join(f"{val:8.6f}" for val in x))
     PA = A[P, :]
     error_factorizacion = np.linalg.norm(PA - (L @ R))
     print(f"Verificación ||P*A - L*R||: {error_factorizacion:.2e}")
@@ -137,15 +160,16 @@ def opcion_3_factorizacion_lr(A):
 
 
 def opcion_4_gauss_seidel(A):
-    print("\n--- Gauss-Seidel (sistema homogéneo A*x=0) ---")
+    print("\n--- Gauss-Seidel (sistema A*x=b) ---")
     variables = [f"X{i + 1}" for i in range(A.shape[0])]
+    b = leer_vector_desde_consola(A.shape[0], "b")
     print(f"Vector inicial X0 (una componente por variable, orden {variables}):")
     X0 = [leer_float(f"  {v}: ") for v in variables]
     epsilon = leer_float("Tolerancia (epsilon): ")
     N_max = leer_int_positivo("Máximo de iteraciones: ")
     print()
-    x, iteraciones, historial, errores, convergio = gauss_seidel_homogeneo(
-        A, X0, epsilon, N_max
+    x, iteraciones, historial, errores, convergio = gauss_seidel_sistema(
+        A, b, X0, epsilon, N_max
     )
     if convergio:
         print(f"Convergió en {iteraciones} iteraciones.")
@@ -162,7 +186,7 @@ def main():
     print("1) Sustitución regresiva (modo transformación)")
     print("2) Eliminación gaussiana (triangularización)")
     print("3) Factorización LR (con pivoteo parcial)")
-    print("4) Gauss-Seidel para sistema homogéneo A*x=0")
+    print("4) Gauss-Seidel para sistema A*x=b")
 
     opcion = input("Seleccione un método (1-4): ").strip()
 

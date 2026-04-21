@@ -121,13 +121,23 @@ def gauss_seidel(A, b, X0, epsilon, N_max):
     A = np.array(A, dtype=float)
     b = np.array(b, dtype=float)
     x = np.array(X0, dtype=float)
+    if A.ndim != 2 or A.shape[0] != A.shape[1]:
+        raise ValueError("A debe ser una matriz cuadrada.")
+    if b.ndim != 1 or b.shape[0] != A.shape[0]:
+        raise ValueError("El vector b debe tener la misma dimensión que A.")
+    if x.ndim != 1 or x.shape[0] != A.shape[0]:
+        raise ValueError("El vector inicial X0 debe tener la misma dimensión que A.")
+    if epsilon <= 0:
+        raise ValueError("La tolerancia epsilon debe ser mayor que 0.")
+    if N_max < 1:
+        raise ValueError("N_max debe ser al menos 1.")
     
     historial = [x.copy()]
     errores = []
     convergio = False
     
     print(f"Iniciando método Gauss-Seidel")
-    print(f"   Tolerancia (ε) = {epsilon}")
+    print(f"   Tolerancia (epsilon) = {epsilon}")
     print(f"   Máximo de iteraciones (N) = {N_max}\n")
     
     for k in range(1, N_max + 1):
@@ -234,4 +244,11 @@ def gauss_seidel_homogeneo(A, X0, epsilon, N_max):
     """
     n = len(X0)
     b = np.zeros(n)
+    return gauss_seidel(A, b, X0, epsilon, N_max)
+
+
+def gauss_seidel_sistema(A, b, X0, epsilon, N_max):
+    """
+    Ejecuta Gauss-Seidel para el sistema general A*x = b.
+    """
     return gauss_seidel(A, b, X0, epsilon, N_max)
