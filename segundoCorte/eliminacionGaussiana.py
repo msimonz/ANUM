@@ -103,6 +103,10 @@ def mostrar_matriz_aumentada(Ab):
     n = Ab.shape[0]
     print("Matriz aumentada [ A | b ]:")
     print()
+    for i in range(n):
+        coefs = "  ".join(f"{Ab[i, j]:8.4f}" for j in range(n))
+        print(f"   [{coefs} | {Ab[i, n]:8.4f}]")
+    print()
 
 
 def eliminacion_gaussiana_solo_matriz(A):
@@ -147,10 +151,6 @@ def mostrar_matriz(matriz, nombre):
     print()
     for fila in matriz:
         print("  " + "  ".join(f"{val:8.4f}" for val in fila))
-    print()
-    for i in range(n):
-        coefs = "  ".join(f"{Ab[i, j]:8.4f}" for j in range(n))
-        print(f"   [{coefs} | {Ab[i, n]:8.4f}]")
     print()
 
 
