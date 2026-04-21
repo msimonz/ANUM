@@ -146,8 +146,11 @@ def gauss_lr_pivoteo(A, b):
         if max_idx != i:
             # Intercambiar filas en R
             R[[i, max_idx]] = R[[max_idx, i]]
-            # Intercambiar filas en L (solo la parte inferior)
-            L[[i, max_idx]] = L[[max_idx, i]]
+            # Intercambiar en L solo las columnas ya construidas [0..i-1].
+            # Intercambiar la fila completa rompe la diagonal unitaria y hace
+            # inválida la factorización PA = LR.
+            if i > 0:
+                L[[i, max_idx], :i] = L[[max_idx, i], :i]
             # Intercambiar en b
             b_perm[[i, max_idx]] = b_perm[[max_idx, i]]
             # Actualizar vector de permutación
