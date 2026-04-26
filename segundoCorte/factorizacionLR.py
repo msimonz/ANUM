@@ -117,9 +117,13 @@ def gauss_lr_pivoteo(A, b):
         Si la matriz es singular (no se puede factorizar)
     """
     
-    n = len(A)
     A = np.array(A, dtype=float)
     b = np.array(b, dtype=float)
+    if A.ndim != 2 or A.shape[0] != A.shape[1]:
+        raise ValueError("A debe ser una matriz cuadrada.")
+    n = A.shape[0]
+    if b.ndim != 1 or b.shape[0] != n:
+        raise ValueError("El vector b debe tener la misma dimensión que A.")
     
     # Inicializar matrices y vector de permutación
     L = np.eye(n)
@@ -146,8 +150,11 @@ def gauss_lr_pivoteo(A, b):
         if max_idx != i:
             # Intercambiar filas en R
             R[[i, max_idx]] = R[[max_idx, i]]
-            # Intercambiar filas en L (solo la parte inferior)
-            L[[i, max_idx]] = L[[max_idx, i]]
+            # Intercambiar en L solo las columnas ya construidas [0..i-1].
+            # Intercambiar la fila completa rompe la diagonal unitaria y hace
+            # inválida la factorización PA = LR.
+            if i > 0:
+                L[[i, max_idx], :i] = L[[max_idx, i], :i]
             # Intercambiar en b
             b_perm[[i, max_idx]] = b_perm[[max_idx, i]]
             # Actualizar vector de permutación
@@ -217,6 +224,10 @@ def sustitucion_hacia_atras(R, z):
         suma = 0
         for j in range(i + 1, n):
             suma += R[i, j] * x[j]
+        if abs(R[i, i]) < 1e-12:
+            raise ValueError(
+                f"División por cero en sustitución hacia atrás (R[{i},{i}] ≈ 0)."
+            )
         x[i] = (z[i] - suma) / R[i, i]
     
     return x

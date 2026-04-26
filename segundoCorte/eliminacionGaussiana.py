@@ -8,8 +8,6 @@ sustitución regresiva sobre la matriz aumentada.
 
 import numpy as np
 
-from factorizacionLR import parsear_sistema, mostrar_solucion, verificar_solucion
-
 # Tolerancia para considerar un pivote numéricamente nulo
 TOL = 1e-12
 
@@ -109,29 +107,46 @@ def mostrar_matriz_aumentada(Ab):
     print()
 
 
-if __name__ == "__main__":
-    print("############## ELIMINACIÓN GAUSSIANA + SUSTITUCIÓN ATRÁS #############")
-    ecuaciones = [
-        "X1 + 2*X2 = 5",
-        "3*X1 + 4*X2 = 11",
-    ]
+def eliminacion_gaussiana_solo_matriz(A):
+    """
+    Triangulariza una matriz cuadrada A con eliminación gaussiana.
 
-    print("Sistema de ecuaciones:")
-    for i, ec in enumerate(ecuaciones, 1):
-        print(f"   {i}. {ec}")
+    Retorna:
+    -------
+    exito : bool
+    U : ndarray o None
+    mensaje : str o None
+    """
+    U = np.array(A, dtype=float).copy()
+    if U.ndim != 2 or U.shape[0] != U.shape[1]:
+        raise ValueError("A debe ser una matriz cuadrada.")
+
+    n = U.shape[0]
+    for i in range(n - 1):
+        p = None
+        for row in range(i, n):
+            if abs(U[row, i]) > TOL:
+                p = row
+                break
+
+        if p is None:
+            return False, None, MSG_FRACASO
+
+        if p != i:
+            U[[i, p], :] = U[[p, i], :]
+
+        piv = U[i, i]
+        for j in range(i + 1, n):
+            m_ji = U[j, i] / piv
+            U[j, :] = U[j, :] - m_ji * U[i, :]
+
+    return True, U, None
+
+
+def mostrar_matriz(matriz, nombre):
+    """Muestra una matriz con formato uniforme."""
+    print(f"{nombre}:")
     print()
-
-    A, b, variables = parsear_sistema(ecuaciones)
-    Ab = matriz_aumentada(A, b)
-    mostrar_matriz_aumentada(Ab)
-
-    print("Resolviendo por eliminación gaussiana...\n")
-    exito, x, mensaje = eliminacion_gaussiana(A, b)
-
-    if exito:
-        print("   Estado: ÉXITO\n")
-        mostrar_solucion(variables, x)
-        verificar_solucion(A, b, x)
-    else:
-        print(f"   Estado: FRACASO")
-        print(f"   {mensaje}\n")
+    for fila in matriz:
+        print("  " + "  ".join(f"{val:8.4f}" for val in fila))
+    print()
